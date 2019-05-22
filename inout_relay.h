@@ -2,15 +2,16 @@
 #define RELAY_HEADER
 
 #include <Arduino.h>
-#include "../config.h"
+#include "config.h"
 
 class Relay {
     int _PIN;
   public:
     Relay( int PIN );
+    void init();
     void on();
     void off();
-	void onSeconds( int seconds );
+    void onSeconds( int seconds );
 };
 
 #endif /* UNIQUE_ID_FOR_HEADER */

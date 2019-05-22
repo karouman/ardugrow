@@ -6,7 +6,11 @@ class Temperature {
     int _PIN;
   public:
     Temperature( int PIN );
-    int getCelcius();
+    float getCelcius();
+    float getFahrenheit();
+  private:
+    void waitMillis( int mil );
+    int readStableValue();
 };
 
 #endif

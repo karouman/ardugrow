@@ -1,0 +1,13 @@
+#ifndef CONFIG_HEADER
+#define CONFIG_HEADER
+
+#define _VERBOSE_ false
+
+#define _WIFI_AP_SSID_ "WIFI_SSID"
+#define _WIFI_AP_PASSWD_ "********"
+
+#define _SERVER_HOST_ "127.0.0.1"
+#define _SERVER_PORT_ "80"
+#define _SERVER_URI_ "/"
+
+#endif

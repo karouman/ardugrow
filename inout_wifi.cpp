@@ -1,4 +1,4 @@
-#include "wifi.h"
+#include "inout_wifi.h"
 
 Wifi::Wifi( int PIN_RX, int PIN_TX ) {
   _PIN_RX = PIN_RX;
@@ -44,7 +44,7 @@ void Wifi::waitMillis( int mil ) {
   // delay() cause garbadge string when serial.read() 
   // the method implement trivila delay method
 
-  int lastmillis = millis();
+  unsigned long lastmillis = millis();
   while( millis() - lastmillis < mil );
 }
 
@@ -70,14 +70,14 @@ String Wifi::postData( String host, String port, String uri, String data ) {
   _wifi_serial->println( "AT+CIPSEND=" + String( postRequest.length() ) );
   waitMillis( 200 );
   if ( _wifi_serial->find( ">" ) ) {
-    Serial.println( "Sending data..." );
+    if ( _VERBOSE_ ) { Serial.println( "Sending data..." ); }
     _wifi_serial->print( postRequest );
     waitMillis( 200 );
     if ( _wifi_serial->find( "SEND OK" ) ) {
       while( _wifi_serial->available() ) {
         response = response + _wifi_serial->readString();
       }
-      Serial.println( response );
+      if ( _VERBOSE_ ) { Serial.println( response ); }
     }
   }
   _countTrueCommand++;

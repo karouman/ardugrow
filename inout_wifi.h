@@ -3,7 +3,7 @@
 
 #include <SoftwareSerial.h>
 #include <Arduino.h>
-#include "../config.h"
+#include "config.h"
 
 class Wifi {
     int _PIN_RX;

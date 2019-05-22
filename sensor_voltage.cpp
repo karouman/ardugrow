@@ -1,10 +1,11 @@
+#include "sensor_voltage.h"
+
 // Get Battery state in Percent 
 // Tested for LIPO HV 5200mAh - 3S
 // 11.0v -> 6% CRITICAL --> analog:478
 // 12.8V ==> 100% --> analog:561
 // 11.5V ==> xx% --> analog:500
 // 10.5V ==> --% --> analog:457
-#include "voltage.h"
 
 Voltage::Voltage( int PIN ) {
   _PIN = PIN;
