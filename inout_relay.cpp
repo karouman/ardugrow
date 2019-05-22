@@ -6,19 +6,19 @@ Relay::Relay( int PIN ) {
 
 void Relay::init() {
   pinMode( _PIN, OUTPUT );
-  digitalWrite( _PIN, LOW );
+  off();
 }
 
 void Relay::on() {
 	// TODO
   Serial.println( "RELAY - ON" );
-  digitalWrite( _PIN, HIGH );
+  digitalWrite( _PIN, LOW );
 }
 
 void Relay::off() {
 	// TODO
   Serial.println( "RELAY - OFF" );
-  digitalWrite( _PIN, LOW );
+  digitalWrite( _PIN, HIGH );
 }
 
 void Relay::onSeconds( int seconds ) {

@@ -2,33 +2,38 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
-const MongoClient = require('mongodb').MongoClient; 
+const mongoClient = require('mongodb').MongoClient; 
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
 
-const port = 8092
-
-const database = null;
-
-MongoClient.connect( "mongodb://localhost:27017", function( err, db ) {
-  if( err ) {
-    console.log( 'Error: Cannot connect mondodb.', err );
-  }
-  else {
-    console.log( 'Connected to mongo' );
-    database = db;
-  } } );
+const port = 8092;
 
 app.post('/', (req, res) => {
-	//console.log( 'POST /' );
-	console.log( 'POST /', req.body );
+  	console.log( new Date().toISOString() + ' POST /', req.body );
+	let data = req.body;
+	data.dateTime = new Date();
+
+	mongoClient.connect( 'mongodb://127.0.0.1:27017', ( err, db ) => {
+	  if ( err ) {
+	    console.log( 'ERROR: Cannot connect mongodb', err );
+	  }
+	  else {
+	    const ardugrowDb = db.db( 'ardugrow' );
+	    ardugrowDb.collection( "test" ).insertOne( data, ( err, res ) => {
+	      if ( err ) {
+		console.log( 'ERROR: Cannot save data to mongodb collection.', err );
+	      }
+	      db.close();
+	    } );
+	  } } );
+
 	// Watter Pump Seconds ';' Next Recodes in X minutes
 	// wp: 3 minutes, nextRecordes in 4 Hours
-	res.send( `^1;10^` );
-	//res.send( `^${ 60 * 3 };${  60 * 4}^` );
+
+	res.send( `^2;1^` );
 } );
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));

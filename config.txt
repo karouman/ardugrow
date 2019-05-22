@@ -3,6 +3,8 @@
 
 #define _VERBOSE_ false
 
+#define _PLANT_NAME_ "ficus"
+
 #define _WIFI_AP_SSID_ "WIFI_SSID"
 #define _WIFI_AP_PASSWD_ "********"
 

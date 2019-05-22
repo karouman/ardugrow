@@ -1,32 +1,28 @@
 #include "sensor_voltage.h"
 
-// Get Battery state in Percent 
-// Tested for LIPO HV 5200mAh - 3S
-// 11.0v -> 6% CRITICAL --> analog:478
-// 12.8V ==> 100% --> analog:561
-// 11.5V ==> xx% --> analog:500
-// 10.5V ==> --% --> analog:457
-
 Voltage::Voltage( int PIN ) {
   _PIN = PIN;
 }
 
-int Voltage::getPercent() {
+float Voltage::get() {
   int aVal = analogRead( _PIN );
+  //return aVal * 1.0;
+  // Get Battery state in Percent 
+  // Tested for LIPO HV 5200mAh - 3S
+  // 531 == 12.98 --> 100% ---> x: 0.02444
+  // 506 == 12.48v --> 84% ---> x: 0.02466
+  // 480 == 11.76v --> 3x% ---> x: 0.02450
+  // 462 == 11.29v --> 10% ---> x: 0.02443
+  return aVal * ( 0.0245075 );
+}
 
-  int aMin = 485; //478;
-  int aMax = 561 - aMin;
-  aVal = aVal - aMin;
-  
-  if ( aVal < 0 )
-    return -1;
-
-  int p = ( ( aVal *  100 ) / aMax );
-
-  if ( p < 0 )
-    return -1;
-  if ( p > 100 )
-    return 100;
-
-  return p;
+int Voltage::getPercent() {
+  float volt = get();
+  if ( volt > 13.0 ) {
+    volt = 13.0;
+  }
+  if ( volt < 11.29 ) {
+    volt = 11.29;
+  }
+  return map( ( int )( volt * 100 ), 1129, 1300, 10, 100 );
 }

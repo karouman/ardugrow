@@ -9,7 +9,6 @@ class Temperature {
     float getCelcius();
     float getFahrenheit();
   private:
-    void waitMillis( int mil );
     int readStableValue();
 };
 

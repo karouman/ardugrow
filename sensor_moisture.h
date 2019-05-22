@@ -7,6 +7,9 @@ class Moisture {
   public:
     Moisture( int PIN );
     int get();
+    int getAverage();
+  private:
+    void waitMillis( int mil );
 };
 
 #endif
