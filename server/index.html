@@ -1,0 +1,190 @@
+<html>
+	<head>
+		<title>Ardugrow</title>
+		<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
+		<link rel="stylesheet" href="./assets/font-awesome-4.7.0/css/font-awesome.min.css">
+		<style type="text/css">
+html {
+	font-family: 'Roboto', sans-serif;
+	background-color:#f2f2f2;
+	cursor: none;
+}
+h2 { padding: 0px 0px 0px 10%; }
+li { font-weight: normal; list-style:none;margin:10px 0px;}
+li i.fa { font-weight: bolder;margin-right:30px;width:30px;text-align:center }
+.plant { border: 1px solid #444;background-color:#fff;border-radius:3px;margin-bottom:10px; }
+#plants { white-space: pre; }
+.refresh {position:absolute;bottom:10px;right:10px;}
+.refresh a { cursor:none; background-color: #CECECE; padding: 5px 10px; color: #444; border-radius: 3px; text-decoration: none; }
+.refresh a:active { background-color: #A1A1A1; }
+.fa-battery-0 { color: #F00 }
+		</style>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+		<body>
+			<div id='plant-template' style='display:none'>
+				<div style="width:60%; float:right;" >
+					<canvas class="chart" width="400" height="200"></canvas>
+				</div>
+				<div style="width:40%; float:left;" >
+					<h2><i class="fa fa-pagelines"></i> </i><span class='name'>Marie</span></h2>
+					<ul>
+						<li><i class="fa fa-history"></i> <span class='moment'>15 minutes ago</span></li>
+						<li><i class="fa fa-thermometer-half"></i> <span class='temperature'>214&deg;</span></li>
+						<li><i class="fa fa-tint"></i> <span class='moisture'>214</span></li>
+						<li><i class="fa fa-battery-full" id="battery-ico"></i> <span class='battery'>214%</span></li>
+						<li><i class="fa fa-check-circle"></i> <span class='trigger'>30s, 453m, 40w</span></li>
+					</ul>
+				</div>
+				<div style="clear:both;float:none;" ></div>
+			</div>
+
+			<div id='allPlants' ></div>
+
+			<div class="refresh">
+				<a href="#" onclick="location.reload(); return false;">Refresh</a>
+			</div>
+
+			<script>
+
+drawChart = ( chartEl, records, limitMoisture ) => {
+var ctx = chartEl.getContext('2d');
+var myChart = new Chart(ctx, {
+	type: 'line',
+	data: {
+		labels: getRecordsAsArray( 'timeFormat', records ),
+		datasets: [
+		{
+			label: 'T',
+			yAxisID: 'y-axis-temperature',
+			data: getRecordsAsArray( 't', records ),
+			fill: false,
+			backgroundColor: 'rgba(255, 99, 132, 0.2)',
+			borderColor: 'rgba(255, 99, 132, 1)',
+			borderWidth: 1
+		}, {
+			label: 'M ',
+			yAxisID: 'y-axis-moisture',
+			data: getRecordsAsArray( 'm', records ),
+			backgroundColor: 'rgba(54, 162, 235, 0.2)',
+			borderColor: 'rgba(54, 162, 235, 1)',
+			borderWidth: 1
+		}, {
+			label: 'B',
+			yAxisID: 'y-axis-battery',
+			data: getRecordsAsArray( 'b', records ),
+			fill: false,
+			pointRadius: 0,
+			borderColor: 'rgba(255, 206, 86, 1)',
+			borderWidth: 2
+		}, {
+			label: 'L',
+			yAxisID: 'y-axis-moisture',
+			data: getRecordsAsArray( limitMoisture, records ),
+			fill: false,
+			pointRadius: 0,
+			borderColor: 'rgba(75, 192, 192, 1)',
+			borderWidth: 1
+		}
+		]
+	},
+	options: {
+		scales: {
+			yAxes: [
+				{
+					id: 'y-axis-battery',
+					ticks: { beginAtZero: true },
+					position: 'left',
+					display: false,
+			       	}, {
+					id: 'y-axis-temperature',
+					ticks: { beginAtZero: true },
+					position: 'left',
+			       	}, {
+					id: 'y-axis-moisture',
+					position: 'right',
+					ticks: { beginAtZero: true },
+					gridLines: { color: "rgba(0, 0, 0, 0)" }
+				}
+			]
+		}
+	}
+});
+};
+
+getRecordsAsArray = ( propertieName, dataArray ) => {
+	return dataArray.map( item => { return item[ propertieName ] || propertieName; } )
+}
+			</script>
+
+		<div id="plants"></div>
+
+		<script>
+const plantsContainer = document.getElementById( 'plants' );
+const xmlhttp = new XMLHttpRequest();
+
+let data;
+xmlhttp.onreadystatechange = function() {
+	if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+		if (xmlhttp.status == 200) {
+			data = xmlhttp.responseText;
+			//plantsContainer.innerHTML = data;
+			try {
+				data = JSON.parse( data );
+			} catch ( exception ) {
+				console.log( exception );
+			}
+			console.log( data );
+			data.forEach( item => {
+				const allPlantsEl = document.getElementById( 'allPlants' );
+
+				const newPlantEl = document.createElement( 'div' );
+				newPlantEl.innerHTML = document.getElementById( 'plant-template' ).innerHTML;
+				newPlantEl.id = 'plant-' + item.name;
+				newPlantEl.className = 'plant';
+
+				allPlantsEl.appendChild( newPlantEl );
+
+				const chartEl = newPlantEl.querySelector( '.chart' );
+
+				newPlantEl.querySelector( '.name' ).innerText = item.name;
+				newPlantEl.querySelector( '.moment' ).innerText = item.moment;
+				newPlantEl.querySelector( '.temperature' ).innerHTML = item.temperature + "&deg;C";
+				newPlantEl.querySelector( '.moisture' ).innerText = item.moisture;
+				newPlantEl.querySelector( '.battery' ).innerText = `${ item.voltage }V --  ${ item.battery }%`;
+				let batIco = '';
+				if ( item.battery > 76 ) batIco = 'fa fa-battery-4';
+				else if ( item.battery > 51 ) batIco = 'fa fa-battery-3';
+				else if ( item.battery > 26 ) batIco = 'fa fa-battery-2';
+				else if ( item.battery > 10 ) batIco = 'fa fa-battery-1';
+				else  batIco = 'fa fa-battery-0';
+				newPlantEl.querySelector( '#battery-ico' ).className = batIco;
+
+				newPlantEl.querySelector( '.trigger' ).innerText = item.trigger.nbRecords + 's ' + item.trigger.minMoisture + 'm';
+
+				drawChart( chartEl, item.records, item.trigger.minMoisture );
+			} );
+		}
+		else if (xmlhttp.status == 400) {
+			alert('There was an error 400');
+		}
+		else {
+			console.log( xmlhttp );
+			alert('something else other than 200 was returned');
+		}
+	}
+};
+
+xmlhttp.open("GET", "http://192.168.0.17:8092", true);
+xmlhttp.setRequestHeader('Access-Control-Allow-Headers', 'http://192.168.0.17:8092');
+xmlhttp.setRequestHeader('Content-type', 'application/ecmascript');
+xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+xmlhttp.send();
+
+
+window.setTimeout( function() { 
+	location.reload(); 
+}, ( 1000 * 60 * 15 ) );
+		</script>
+	</body>
+</html>

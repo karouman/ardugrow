@@ -1,0 +1,26 @@
+{
+  "name": "ardugrow-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/karouman/ardugrow.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/karouman/ardugrow/issues"
+  },
+  "homepage": "https://github.com/karouman/ardugrow#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.0",
+    "moment": "^2.24.0",
+    "mongodb": "=2.2.36"
+  }
+}
