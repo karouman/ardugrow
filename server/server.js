@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 const port = 8092;
 
 app.post('/', (req, res) => {
-  	console.log( new Date().toISOString() + ' POST /', req.body );
+	console.log( new Date().toISOString() + ' POST /', req.body );
 	let data = req.body;
 	data.dateTime = new Date();
 
@@ -33,7 +33,9 @@ app.post('/', (req, res) => {
 	// Watter Pump Seconds ';' Next Recodes in X minutes
 	// wp: 3 minutes, nextRecordes in 4 Hours
 
-	res.send( `^2;1^` );
+	  //console.log( 'Reply: 2;1' );
+
+	res.send( `^20;1^` );
 } );
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

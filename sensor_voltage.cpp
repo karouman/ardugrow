@@ -5,24 +5,25 @@ Voltage::Voltage( int PIN ) {
 }
 
 float Voltage::get() {
-  int aVal = analogRead( _PIN );
-  //return aVal * 1.0;
-  // Get Battery state in Percent 
-  // Tested for LIPO HV 5200mAh - 3S
-  // 531 == 12.98 --> 100% ---> x: 0.02444
-  // 506 == 12.48v --> 84% ---> x: 0.02466
-  // 480 == 11.76v --> 3x% ---> x: 0.02450
-  // 462 == 11.29v --> 10% ---> x: 0.02443
-  return aVal * ( 0.0245075 );
+  return analogRead( _PIN ) * ( 12.74 / 682 );
 }
+
+// volt*100 -> percent array
+// 100%, 95%, 90%, 85%... 0%
+const int tab[] = { 1290, 1281, 1260, 1245, 1230, 1215, 1200, 1182, 1176, 1161, 1155, 1146, 1134, 1128, 1119, 1113, 1107, 1101, 1098, 1062, 900 };
 
 int Voltage::getPercent() {
   float volt = get();
-  if ( volt > 13.0 ) {
-    volt = 13.0;
+  int voltI = ( int )( volt * 100.0 );
+
+  int percent = 100;
+  int i = 0;
+  for ( ; i < 20; i++ ) {
+    if ( voltI > tab[ i ] )
+      break;
+    percent -= 5;
   }
-  if ( volt < 11.29 ) {
-    volt = 11.29;
-  }
-  return map( ( int )( volt * 100 ), 1129, 1300, 10, 100 );
+
+
+  return ( percent == 100 ? 100: percent + map( voltI, tab[ i ], tab[ i - 1 ], 0, 4 ) );
 }
