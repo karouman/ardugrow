@@ -17,8 +17,9 @@ bool Wifi::connect( String SSID, String PASSWD) {
   // First time connecting ESP8266, change the baud rate to 9600.
   // 1 - Connect ESP at 115200 then send AT+UART_DEF to change serial speed.
   // 2 - Next 'reboot', use 9600 Baud with SoftwareSerial and ESP8266
-  //_wifi_serial->begin( 115200 ); // GPS; 9600 first time, 38400 second time
-  //_wifi_serial->println( "AT+UART_DEF=9600,8,1,0,0" );
+  // _wifi_serial->begin( 115200 ); // GPS; 9600 first time, 38400 second time
+  // _wifi_serial->println( "AT+UART_DEF=9600,8,1,0,0" );
+  // return;
 
   _wifi_serial->begin( 9600 );
   sendData( "AT\r\n", 10, "OK" ); // Check Serial port / AT commands.
@@ -49,14 +50,9 @@ void Wifi::waitMillis( int mil ) {
 }
 
 String Wifi::postData( String host, String port, String uri, String data ) {
-  // host: 192.168.43.239
-  // port: 8092
-  // uri: /upload
-  // data: key=value&query=string&data=format
   String response = "";
 
   sendData( "AT+CIPMUX=0\r\n", 5, "OK" );
-  //sendData( "AT+CIPSTART=\"TCP\",\"192.168.43.239\",8092\r\n", 20, "OK" );
   sendData( "AT+CIPSTART=\"TCP\",\"" + host + "\"," + port + "\r\n", 20, "OK" );
 
   String postRequest = "POST " + uri + " HTTP/1.1\r\n";
@@ -68,17 +64,28 @@ String Wifi::postData( String host, String port, String uri, String data ) {
   postRequest = postRequest + data;
 
   _wifi_serial->println( "AT+CIPSEND=" + String( postRequest.length() ) );
+  //delay( 200 );
   waitMillis( 200 );
   if ( _wifi_serial->find( ">" ) ) {
     if ( _VERBOSE_ ) { Serial.println( "Sending data..." ); }
     _wifi_serial->print( postRequest );
-    waitMillis( 200 );
-    if ( _wifi_serial->find( "SEND OK" ) ) {
-      while( _wifi_serial->available() ) {
-        response = response + _wifi_serial->readString();
+
+
+  long int time = millis();
+    while( (time+1000) > millis()) {
+      while(_wifi_serial->available()) {
+        char c = _wifi_serial->read();
+        response+=c;
       }
-      if ( _VERBOSE_ ) { Serial.println( response ); }
     }
+    
+    //waitMillis( 200 );
+    //if ( _wifi_serial->find( "SEND OK" ) ) {
+    //  while( _wifi_serial->available() ) {
+    //    response = response + (char)_wifi_serial->read();
+    //  }
+      if ( _VERBOSE_ ) { Serial.println( response ); }
+    //}
   }
   _countTrueCommand++;
 

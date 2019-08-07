@@ -22,8 +22,8 @@ int Temperature::readStableValue() {
 
 
 float Temperature::getCelcius() {
-  //return analogRead( _PIN ) * 1.0;
-  return readStableValue() * ( 5.0 / 1023.0 * 100.0 );
+  return analogRead( _PIN ) * 1.0;
+  // return readStableValue() * ( 5.0 / 1023.0 * 100.0 );
 }
 
 float Temperature::getFahrenheit() {
@@ -34,4 +34,3 @@ void Temperature::waitMillis( int mil ) {
   unsigned long lastmillis = millis();
   while( millis() - lastmillis < mil );
 }
-
