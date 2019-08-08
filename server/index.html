@@ -175,8 +175,13 @@ xmlhttp.onreadystatechange = function() {
 	}
 };
 
-xmlhttp.open("GET", "http://192.168.0.17:8092", true);
-xmlhttp.setRequestHeader('Access-Control-Allow-Headers', 'http://192.168.0.17:8092');
+
+const ipAddress = "192.168.0.17";
+// const ipAddress = "192.168.0.100";
+const port = 8092;
+
+xmlhttp.open("GET", `http://${ ipAddress }:${ port }`, true);
+xmlhttp.setRequestHeader('Access-Control-Allow-Headers', `http://${ ipAddress }:${ port }`);
 xmlhttp.setRequestHeader('Content-type', 'application/ecmascript');
 xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
 xmlhttp.send();
